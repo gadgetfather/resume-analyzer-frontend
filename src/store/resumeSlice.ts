@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ResumeState } from '../types';
 import axios from 'axios';
+import { config } from '@/config';
 
 const initialState: ResumeState = {
   resumeText: '',
@@ -24,7 +25,7 @@ export const uploadResume = createAsyncThunk(
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post('http://localhost:8000/upload/resume', formData, {
+    const response = await axios.post(`${config.API_URL}/upload/resume`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       }
@@ -43,7 +44,7 @@ export const analyzeResume = createAsyncThunk(
       job_description: state.resume.jobDescription
     });
 
-    const response = await axios.post('http://localhost:8000/analyze', {
+    const response = await axios.post(`${config.API_URL}/analyze`, {
       resume_text: state.resume.resumeText,
       job_description: state.resume.jobDescription
     });
