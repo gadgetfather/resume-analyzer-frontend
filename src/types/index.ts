@@ -7,4 +7,7 @@ export interface ResumeState {
     isLoading: boolean;
     error: string | null;
     fileUploadProgress: number;
+    suggestions: string[];
+    keySkillsAnalysis: string;
+    improvementAreas: string;
   }

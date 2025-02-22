@@ -12,6 +12,9 @@ const initialState: ResumeState = {
   isLoading: false,
   error: null,
   fileUploadProgress: 0,
+  suggestions: [],            // Add this
+  keySkillsAnalysis: '',     // Add this
+  improvementAreas: '',      // Add this
 };
 
 // Only keep resume upload thunk
@@ -35,10 +38,17 @@ export const analyzeResume = createAsyncThunk(
   'resume/analyze',
   async (_, { getState }) => {
     const state = getState() as { resume: ResumeState };
+    console.log('Sending analysis request:', {
+      resume_text: state.resume.resumeText,
+      job_description: state.resume.jobDescription
+    });
+
     const response = await axios.post('http://localhost:8000/analyze', {
       resume_text: state.resume.resumeText,
       job_description: state.resume.jobDescription
     });
+
+    console.log('Analysis response:', response.data);
     return response.data;
   }
 );
@@ -77,9 +87,12 @@ const resumeSlice = createSlice({
       })
       .addCase(analyzeResume.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.keywords = action.payload.keywords;
-        state.matchedKeywords = action.payload.matchedKeywords;
-        state.score = action.payload.score;
+        state.keywords = action.payload.keywords || [];
+        state.matchedKeywords = action.payload.matchedKeywords || [];
+        state.score = action.payload.score || 0;
+        state.suggestions = action.payload.suggestions || [];          // Add this
+        state.keySkillsAnalysis = action.payload.keySkillsAnalysis || '';  // Add this
+        state.improvementAreas = action.payload.improvementAreas || '';    // Add this
         state.error = null;
       })
       .addCase(analyzeResume.rejected, (state, action) => {
